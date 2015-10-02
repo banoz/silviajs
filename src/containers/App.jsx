@@ -3,6 +3,7 @@ import React, { Component /* , PropTypes */ } from 'react';
 import Header from '../components/Header.jsx';
 import Footer from '../components/Footer.jsx';
 import Status from '../components/Status.jsx';
+import Calibrate from '../components/Calibrate.jsx';
 
 class App extends Component {
   constructor(props) {
@@ -16,6 +17,8 @@ class App extends Component {
         <div className='wrap'>
           <Header />
           <Status temperature={80} power={10}/>
+          <Calibrate temperature={80} power={10} error={10} targetTemperature={96}
+            offset={4} proportional={10} integral={0.1} iPart={8.5} />
           <Footer />
         </div>
       </div>

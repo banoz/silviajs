@@ -1,23 +1,20 @@
 {
-  "name": "react-webpack-starter",
-  "version": "0.1.0",
-  "description": "React webpack starter template",
+  "name": "silviajs",
+  "version": "0.0.1",
+  "description": "Silvia Espresso Machine Control",
   "main": "lib/index.js",
   "dependencies": {},
   "author": {
-    "name": "Krasimir Tsonev",
-    "email": "info@krasimirtsonev.com",
-    "url": "http://krasimirtsonev.com"
+    "name": "Julien Vanier",
+    "url": "http://julienvanier.com"
   },
   "license": "MIT",
   "keywords": [
-    "react",
-    "carousel",
-    "responsive"
+    "react"
   ],
   "repository": {
     "type": "git",
-    "url": "git@github.com:krasimir/react-webpack-starter.git"
+    "url": "git@github.com:monkbroc/silviajs.git"
   },
   "scripts": {
     "dev": "WEBPACK_ENV=dev ./node_modules/.bin/webpack --watch --inline",
@@ -47,6 +44,11 @@
     "karma-sourcemap-loader": "0.3.5",
     "karma-webpack": "1.7.0",
     "react": "0.13.3",
+    "react-redux": "3.0.1",
+    "redux": "3.0.2",
+    "redux-logger": "2.0.1",
+    "redux-thunk": "1.0.0",
+    "spark": "1.0.0",
     "watch": "0.16.0",
     "webpack": "1.12.2",
     "webpack-dev-server": "1.11.0"

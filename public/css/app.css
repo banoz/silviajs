@@ -1,0 +1,13 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,700");
+h1, h2, h3, h4, h5 {
+  font-family: "Open Sans";
+  font-weight: 300; }
+
+section {
+  margin-bottom: 60px; }
+  section > h1, section h2, section h3, section h4, section h5, section h6 {
+    margin-bottom: 30px; }
+
+.footer {
+  text-align: right;
+  margin-top: 60px; }

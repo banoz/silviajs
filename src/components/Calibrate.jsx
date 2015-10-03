@@ -9,7 +9,7 @@ class Calibrate extends Component {
   }
 
   onChange(field) {
-    return function (event) {
+    return function(event) {
       // TODO: fire action
       console.log(`${field} updated to ${event.target.value}`);
     };

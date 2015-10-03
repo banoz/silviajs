@@ -1,21 +1,31 @@
 import React, { Component, PropTypes } from "react";
+import classNames from "classnames";
 
 class NavPill extends Component {
+  handleClick(event) {
+    event.preventDefault();
+    event.target.page = this.props.page;
+    if(this.props.onClick) {
+      this.props.onClick(event);
+    }
+  }
+
   render() {
-    var activeClass = this.props.active ? "active" : "";
+    var isActive = this.props.page === this.props.activePage;
 
     return (
-      <li className={activeClass}>
-        <a href={this.props.href}>{this.props.name}</a>
+      <li className={classNames({ active: isActive })}>
+        <a href="#" onClick={this.handleClick.bind(this)}>{this.props.name}</a>
       </li>
     );
   }
 }
 
 NavPill.propTypes = {
-  active: PropTypes.bool,
   name: PropTypes.string.isRequired,
-  href: PropTypes.string.isRequired
+  page: PropTypes.string.isRequired,
+  activePage: PropTypes.string.isRequired,
+  onClick: PropTypes.func
 };
 
 export default NavPill;

@@ -1,37 +1,56 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from "react";
 
 class CalValue extends Component {
   constructor(props) {
     super(props);
-    this.keydown = this.keydown.bind(this);
-    this.blur = this.blur.bind(this);
-  }
-
-  keydown(event) {
-    var ENTER = 13;
-
-    if (event.keyCode === ENTER) {
-      event.preventDefault();
-    // TODO: get value
-      this.props.updated(0);
-    }
-  }
-
-  blur(event) {
-    // TODO: get value
-    this.props.updated(0);
+    this.emitChange = this.emitChange.bind(this);
+    this.keyDown = this.keyDown.bind(this);
   }
 
   render() {
     return (
-      <span contentEditable='true' onKeyDown={this.keydown} onBlur={this.blur}>{this.props.value}</span>
+      <span
+        {...this.props}
+        onKeyDown={this.keyDown}
+        onBlur={this.emitChange}
+        contentEditable="true"
+        dangerouslySetInnerHTML={{__html: this.props.value}}></span>
     );
+  }
+
+  shouldComponentUpdate(nextProps) {
+    return nextProps.value !== React.findDOMNode(this).innerHTML;
+  }
+
+  componentDidUpdate() {
+    if(this.props.value !== React.findDOMNode(this).innerHTML) {
+      React.findDOMNode(this).innerHTML = this.props.value;
+    }
+  }
+
+  keyDown(event) {
+    const ENTER = 13;
+
+    if(event.keyCode === ENTER) {
+      event.preventDefault();
+      this.emitChange(event);
+    }
+  }
+
+  emitChange(event) {
+    var value = React.findDOMNode(this).innerHTML;
+
+    if(this.props.onChange && value !== this.lastValue) {
+      event.target = { value: value };
+      this.props.onChange(event);
+    }
+    this.lastValue = value;
   }
 }
 
 CalValue.propTypes = {
-  value: PropTypes.number.isRequired,
-  updated: PropTypes.func.isRequired
+  value: PropTypes.node.isRequired,
+  onChange: PropTypes.func.isRequired
 };
 
 export default CalValue;

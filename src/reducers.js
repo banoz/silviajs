@@ -1,6 +1,6 @@
-// import { combineReducers } from 'redux';
+// import { combineReducers } from "redux";
 
-const rootReducer = function (state = {}, action) {
+const rootReducer = function(state = {}, action) {
   return state;
 };
 

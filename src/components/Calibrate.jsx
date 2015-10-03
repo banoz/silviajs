@@ -1,17 +1,17 @@
-import React, { Component, PropTypes } from 'react';
-import CalValue from './CalValue.jsx';
-import { roundPrec } from '../lib/round';
+import React, { Component, PropTypes } from "react";
+import CalValue from "./CalValue.jsx";
+import { roundPrec } from "../lib/round";
 
 class Calibrate extends Component {
   constructor(props) {
     super(props);
-    this.updated = this.updated.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  updated(field) {
-    return function (value) {
+  onChange(field) {
+    return function (event) {
       // TODO: fire action
-      console.log(`${field} updated to ${value}`);
+      console.log(`${field} updated to ${event.target.value}`);
     };
   }
 
@@ -20,10 +20,10 @@ class Calibrate extends Component {
 
     return (
       <article>
-        <section className='calibratable'>
+        <section className="calibratable">
           <h1>Calibrate</h1>
 
-          <table className='calibration-table table table-striped'>
+          <table className="calibration-table table table-striped">
             <thead>
               <tr>
                 <th>Error</th>
@@ -38,14 +38,14 @@ class Calibrate extends Component {
                 <td>{roundPrec(this.props.error, 1)}</td>
                 <td>=</td>
                 <td><CalValue value={roundPrec(this.props.targetTemperature, 1)}
-                  updated={this.updated('targetTemperature')} /></td>
+                  onChange={this.onChange("targetTemperature")} /></td>
                 <td>-</td>
                 <td>{roundPrec(this.props.temperature, 1)}</td>
               </tr>
             </tbody>
           </table>
 
-          <table className='calibration-table table table-striped'>
+          <table className="calibration-table table table-striped">
             <thead>
               <tr>
                 <th>Output</th>
@@ -64,10 +64,10 @@ class Calibrate extends Component {
                 <td>{roundPrec(this.props.power, 1)}</td>
                 <td>=</td>
                 <td><CalValue value={roundPrec(this.props.offset, 1)}
-                  updated={this.updated('offset')} /></td>
+                  onChange={this.onChange("offset")} /></td>
                 <td>+</td>
                 <td><CalValue value={roundPrec(this.props.proportional, 1)}
-                  updated={this.updated('proportional')} /></td>
+                  onChange={this.onChange("proportional")} /></td>
                 <td>&times;</td>
                 <td>{roundPrec(this.props.error, 1)}</td>
                 <td>+</td>
@@ -76,7 +76,7 @@ class Calibrate extends Component {
             </tbody>
           </table>
 
-          <table className='calibration-table table table-striped'>
+          <table className="calibration-table table table-striped">
             <thead>
               <tr>
                 <th>&Sigma; Error</th>
@@ -95,7 +95,7 @@ class Calibrate extends Component {
                 <td>{roundPrec(iPartOld, 1)}</td>
                 <td>+</td>
                 <td><CalValue value={roundPrec(this.props.integral, 1)}
-                  updated={this.updated('integral')} /></td>
+                  onChange={this.onChange("integral")} /></td>
                 <td>&times;</td>
                 <td>{roundPrec(this.props.error, 1)}</td>
               </tr>

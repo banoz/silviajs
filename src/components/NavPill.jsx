@@ -1,8 +1,8 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from "react";
 
 class NavPill extends Component {
   render() {
-    var activeClass = this.props.active ? 'active' : '';
+    var activeClass = this.props.active ? "active" : "";
 
     return (
       <li className={activeClass}>

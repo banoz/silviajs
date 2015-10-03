@@ -1,9 +1,9 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component, PropTypes } from "react";
 
 class Status extends Component {
   renderTemperature() {
     if (this.props.sleeping) {
-      return (<i className='silvia silvia-sleep'></i>);
+      return (<i className="silvia silvia-sleep"></i>);
     }
     return this.props.temperature;
   }
@@ -16,10 +16,10 @@ class Status extends Component {
     return (
       <article>
         <section>
-          <h2 className='text-center'>Temperature</h2>
-          <div className='circle circle-medium circle-border'>
-            <div className='circle-inner'>
-              <div className='score-text'>
+          <h2 className="text-center">Temperature</h2>
+          <div className="circle circle-medium circle-border">
+            <div className="circle-inner">
+              <div className="score-text">
                {this.renderTemperature()}
               </div>
             </div>
@@ -27,13 +27,13 @@ class Status extends Component {
         </section>
 
         <section>
-          <div className='row'>
-            <div className='col-sm-3 col-md-3 col-md-offset-2'>
+          <div className="row">
+            <div className="col-sm-3 col-md-3 col-md-offset-2">
               <h2>Heater <b>{powerRound}%</b></h2>
             </div>
-            <div className='col-sm-9 col-md-5'>
-              <div className='progress progress-side'>
-                <div className='progress-bar progress-bar-warning' style={{width: powerLog + '%'}}></div>
+            <div className="col-sm-9 col-md-5">
+              <div className="progress progress-side">
+                <div className="progress-bar progress-bar-warning" style={{width: powerLog + "%"}}></div>
               </div>
             </div>
           </div>
@@ -44,7 +44,7 @@ class Status extends Component {
 }
 
 Status.propTypes = {
-  sleeping: PropTypes.boolean,
+  sleeping: PropTypes.bool,
   temperature: PropTypes.number,
   power: PropTypes.number
 };

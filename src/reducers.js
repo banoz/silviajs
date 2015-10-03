@@ -1,7 +1,7 @@
 import { combineReducers } from "redux";
-import { NAVIGATE } from "./actions";
+import { NAVIGATE, LOGIN_REQUEST } from "./actions";
 
-const defaultPage = "status";
+const defaultPage = "login";
 
 function page(state = defaultPage, action) {
   switch(action.type) {
@@ -12,8 +12,12 @@ function page(state = defaultPage, action) {
   }
 }
 
-function token(state = null, action) {
+function login(state = null, action) {
   switch(action.type) {
+    case LOGIN_REQUEST:
+      return Object.assign({}, state, {
+        inProgress: true
+      });
     /* case LOGIN_SUCCESSFUL:
     * return action.token;
     * case LOGIN_INVALID:
@@ -26,7 +30,7 @@ function token(state = null, action) {
 
 const rootReducer = combineReducers({
   page,
-  token
+  login
 });
 
 export default rootReducer;

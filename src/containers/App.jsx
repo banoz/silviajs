@@ -5,7 +5,7 @@ import Footer from "../components/Footer.jsx";
 import Status from "../components/Status.jsx";
 import Calibrate from "../components/Calibrate.jsx";
 import Sleep from "../components/Sleep.jsx";
-import Login from "../components/Login.jsx";
+import Login from "../containers/Login.jsx";
 
 class App extends Component {
   constructor(props) {

@@ -1,4 +1,5 @@
 import Spark from "./lib/spark";
+import FirmwareDataMapper from "./lib/FirmwareDataMapper";
 
 // Action types
 export const LOGIN_REQUEST = "login_request";
@@ -12,6 +13,7 @@ export const DATA_RECEIVE = "data_receive";
 
 export const CALS_FETCH = "cals_fetch";
 export const CALS_RECEIVE = "cals_receive";
+export const CALS_SET = "cals_set";
 export const CALS_FAILURE = "cals_failure";
 
 // Action creators
@@ -86,14 +88,7 @@ export function subscribeToDeviceData() {
         console.log(event);
       } else {
         let rawData = JSON.parse(event.data);
-        let data = {
-          temperature: rawData.temp,
-          power: rawData.dc,
-          error: rawData.e,
-          sleeping: rawData.s === 1,
-          iPart: rawData.i,
-          pPart: rawData.p
-        };
+        let data = FirmwareDataMapper.variablesToApp(rawData);
 
         dispatch(dataReceive(data));
       }
@@ -111,10 +106,16 @@ export function calsFetch(group) {
   };
 }
 
-export function calsReceive(group, data) {
+export function calsReceive(group) {
   return {
     type: CALS_RECEIVE,
-    group,
+    group
+  };
+}
+
+export function calsSet(data) {
+  return {
+    type: CALS_SET,
     data
   };
 }
@@ -135,14 +136,10 @@ export function fetchCalibrations() {
     Spark.getVariable(deviceName, deviceCals)
     .then(function(payload) {
       let rawData = JSON.parse(payload.result);
-      let data = {
-        targetTemperature: rawData.sp,
-        proportional: rawData.Kp,
-        integral: rawData.Ki,
-        offset: rawData.Ko
-      };
+      let data = FirmwareDataMapper.calibrationsToApp(rawData);
 
-      dispatch(calsReceive(group, data));
+      dispatch(calsReceive(group));
+      dispatch(calsSet(data));
     })
     .catch(function(err) {
       dispatch(calsFailure(group));
@@ -164,10 +161,25 @@ export function fetchWakeupTime() {
     .then(function(payload) {
       let wakeupTime = JSON.parse(payload.result);
 
-      dispatch(calsReceive(group, {wakeupTime}));
+      dispatch(calsReceive(group));
+      dispatch(calsSet({wakeupTime}));
     })
     .catch(function(err) {
       dispatch(calsFailure(group));
+      console.log(err);
+    });
+  };
+}
+
+export function setCalibration(cal, value) {
+  return function(dispatch) {
+    let firmwareCal = FirmwareDataMapper.calibrationFirmwareName(cal);
+
+    Spark.callFunction(deviceName, "set", `${firmwareCal}=${value}`)
+    .then(function() {
+      dispatch(calsSet({ [cal]: value }));
+    })
+    .catch(function(err) {
       console.log(err);
     });
   };

@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes } from "react";
+import PureComponent from "./PureComponent";
 import classNames from "classnames";
 
-class NavPill extends Component {
+class NavPill extends PureComponent {
   handleClick(event) {
     event.preventDefault();
     event.target.page = this.props.page;

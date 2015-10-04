@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes } from "react";
+import PureComponent from "./PureComponent";
 import NavPill from "./NavPill.jsx";
 
-class Navbar extends Component {
+class Navbar extends PureComponent {
   render() {
     var pillProps = {
       onClick: this.props.handleNavigate,

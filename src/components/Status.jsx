@@ -1,7 +1,8 @@
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes } from "react";
+import PureComponent from "./PureComponent";
 import { roundPrec } from "../lib/round";
 
-class Status extends Component {
+class Status extends PureComponent {
   renderTemperature() {
     if (this.props.sleeping) {
       return (<i className="silvia silvia-sleep"></i>);

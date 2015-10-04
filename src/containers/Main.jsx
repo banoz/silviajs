@@ -7,9 +7,16 @@ import Calibrate from "../components/Calibrate.jsx";
 import Sleep from "../components/Sleep.jsx";
 
 import { subscribeToDeviceData, fetchCalibrations,
-  fetchWakeupTime } from "../actions";
+  setCalibration, fetchWakeupTime } from "../actions";
 
 class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.loadMainCals = this.loadMainCals.bind(this);
+    this.handleCalChange = this.handleCalChange.bind(this);
+    this.loadSleepCals = this.loadSleepCals.bind(this);
+  }
+
   data() {
     return this.props.variables.data;
   }
@@ -44,6 +51,11 @@ class Main extends Component {
       this.props.dispatch(fetchWakeupTime());
     }
   }
+
+  handleCalChange(field, value) {
+    value = parseFloat(value);
+    this.props.dispatch(setCalibration(field, value));
+  }
 }
 
 Main.renderPage = {};
@@ -59,7 +71,8 @@ Main.renderPage.calibrate = function() {
 
   return (
     <Calibrate {...this.data()} {...calProps}
-      onMount={this.loadMainCals.bind(this)} />
+      onMount={this.loadMainCals}
+      handleChange={this.handleCalChange} />
   );
 };
 
@@ -72,7 +85,8 @@ Main.renderPage.sleep = function() {
 
   return (
     <Sleep {...sleepProps}
-      onMount={this.loadSleepCals.bind(this)} />
+      onMount={this.loadSleepCals}
+      handleChange={this.handleCalChange} />
   );
 };
 

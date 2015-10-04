@@ -1,18 +1,23 @@
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes } from "react";
+import PureComponent from "./PureComponent";
 import CalValue from "./CalValue.jsx";
 import { roundPrec } from "../lib/round";
 
-class Calibrate extends Component {
+class Calibrate extends PureComponent {
   constructor(props) {
     super(props);
     this.onChange = this.onChange.bind(this);
+    this.changeHandlers = {};
   }
 
   onChange(field) {
-    return function(event) {
-      // TODO: fire action
-      console.log(`${field} updated to ${event.target.value}`);
-    };
+    if(!this.changeHandlers[field]) {
+      this.changeHandlers[field] = function(event) {
+        this.props.handleChange(field, event.target.value);
+      }.bind(this);
+    }
+
+    return this.changeHandlers[field];
   }
 
   render() {
@@ -114,6 +119,7 @@ class Calibrate extends Component {
 
 Calibrate.propTypes = {
   onMount: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
   loaded: PropTypes.bool.isRequired,
   error: PropTypes.number,
   power: PropTypes.number,

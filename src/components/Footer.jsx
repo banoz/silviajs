@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
+import PureComponent from "./PureComponent";
 
-class Footer extends Component {
+class Footer extends PureComponent {
   render() {
     var year = new Date().getFullYear();
 

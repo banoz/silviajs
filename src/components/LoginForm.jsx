@@ -1,6 +1,7 @@
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes } from "react";
+import PureComponent from "./PureComponent";
 
-class LoginForm extends Component {
+class LoginForm extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {

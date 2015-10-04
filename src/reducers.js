@@ -3,7 +3,7 @@ import PersistentState from "./PersistentState";
 import { NAVIGATE,
   LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS,
   DATA_STREAM, DATA_RECEIVE,
-  CALS_FETCH, CALS_RECEIVE, CALS_FAILURE
+  CALS_FETCH, CALS_RECEIVE, CALS_SET, CALS_FAILURE
 } from "./actions";
 
 const defaultPage = "login";
@@ -110,7 +110,7 @@ const defaultCalsData = {
 
 function calibrationsData(state = defaultCalsData, action) {
   switch(action.type) {
-    case CALS_RECEIVE:
+    case CALS_SET:
       return Object.assign({}, state, action.data);
     default:
       return state;

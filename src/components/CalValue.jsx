@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from "react";
+import React, { PropTypes, Component } from "react";
+import shallowEqual from "shallowequal";
 
 class CalValue extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class CalValue extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.value !== React.findDOMNode(this).innerHTML;
+    return !shallowEqual(this.props, nextProps);
   }
 
   componentDidUpdate() {
@@ -40,11 +41,10 @@ class CalValue extends Component {
   emitChange(event) {
     var value = React.findDOMNode(this).innerHTML;
 
-    if(this.props.onChange && value !== this.lastValue) {
+    if(this.props.onChange && value !== this.props.value.toString()) {
       event.target = { value: value };
       this.props.onChange(event);
     }
-    this.lastValue = value;
   }
 }
 

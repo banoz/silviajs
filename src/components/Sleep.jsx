@@ -30,6 +30,9 @@ class Sleep extends Component {
   }
 
   render() {
+    let loaded = this.props.loaded;
+    let wakeTime = loaded ? this.timeFromTimestamp(this.props.wakeTime) : "–";
+
     return (
       <article>
         <section className="calibratable">
@@ -37,7 +40,7 @@ class Sleep extends Component {
 
           <h2><button className="btn btn-warning btn-lg" onClick={this.sleep(true)}>Sleep</button>
             {" until "}
-            <td><CalValue value={this.timeFromTimestamp(this.props.wakeTime)}
+            <td><CalValue value={wakeTime}
               onChange={this.onChange("wakeTime")} /></td>
           </h2>
 
@@ -46,10 +49,16 @@ class Sleep extends Component {
       </article>
     );
   }
+
+  componentDidMount() {
+    this.props.onMount();
+  }
 }
 
 Sleep.propTypes = {
-  wakeTime: PropTypes.number.isRequired
+  onMount: PropTypes.func.isRequired,
+  loaded: PropTypes.bool.isRequired,
+  wakeTime: PropTypes.number
 };
 
 export default Sleep;

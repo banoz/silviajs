@@ -16,7 +16,8 @@ class Calibrate extends Component {
   }
 
   render() {
-    var iPartOld = this.props.iPart - this.props.integral * this.props.error;
+    let loaded = this.props.loaded;
+    let iPartOld = loaded ? this.props.iPart - this.props.integral * this.props.error : "–";
 
     return (
       <article>
@@ -94,7 +95,7 @@ class Calibrate extends Component {
                 <td>=</td>
                 <td>{roundPrec(iPartOld, 1)}</td>
                 <td>+</td>
-                <td><CalValue value={roundPrec(this.props.integral, 1)}
+                <td><CalValue value={roundPrec(this.props.integral, 3)}
                   onChange={this.onChange("integral")} /></td>
                 <td>&times;</td>
                 <td>{roundPrec(this.props.error, 1)}</td>
@@ -105,17 +106,23 @@ class Calibrate extends Component {
       </article>
     );
   }
+
+  componentDidMount() {
+    this.props.onMount();
+  }
 }
 
 Calibrate.propTypes = {
-  error: PropTypes.number.isRequired,
-  power: PropTypes.number.isRequired,
-  temperature: PropTypes.number.isRequired,
-  targetTemperature: PropTypes.number.isRequired,
-  offset: PropTypes.number.isRequired,
-  proportional: PropTypes.number.isRequired,
-  integral: PropTypes.number.isRequired,
-  iPart: PropTypes.number.isRequired
+  onMount: PropTypes.func.isRequired,
+  loaded: PropTypes.bool.isRequired,
+  error: PropTypes.number,
+  power: PropTypes.number,
+  temperature: PropTypes.number,
+  targetTemperature: PropTypes.number,
+  offset: PropTypes.number,
+  proportional: PropTypes.number,
+  integral: PropTypes.number,
+  iPart: PropTypes.number
 };
 
 export default Calibrate;

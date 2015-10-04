@@ -10,6 +10,10 @@ export const NAVIGATE = "navigate";
 export const DATA_STREAM = "data_stream";
 export const DATA_RECEIVE = "data_receive";
 
+export const CALS_FETCH = "cals_fetch";
+export const CALS_RECEIVE = "cals_receive";
+export const CALS_FAILURE = "cals_failure";
+
 // Action creators
 
 export function navigateTo(page) {
@@ -58,6 +62,8 @@ export function loginToParticle(email, password) {
 
 const deviceName = "silvia";
 const deviceEvent = "coffee";
+const deviceCals = "cals";
+const deviceWakeupTime = "Twakeup";
 
 export function dataStream(request) {
   return {
@@ -84,7 +90,7 @@ export function subscribeToDeviceData() {
           temperature: rawData.temp,
           power: rawData.dc,
           error: rawData.e,
-          sleeping: rawData.s,
+          sleeping: rawData.s === 1,
           iPart: rawData.i,
           pPart: rawData.p
         };
@@ -95,5 +101,74 @@ export function subscribeToDeviceData() {
 
     // Save the XMLHttpRequest to be able to abort it later
     dispatch(dataStream(request));
+  };
+}
+
+export function calsFetch(group) {
+  return {
+    type: CALS_FETCH,
+    group
+  };
+}
+
+export function calsReceive(group, data) {
+  return {
+    type: CALS_RECEIVE,
+    group,
+    data
+  };
+}
+
+export function calsFailure(group) {
+  return {
+    type: CALS_FAILURE,
+    group
+  };
+}
+
+export function fetchCalibrations() {
+  return function(dispatch) {
+    let group = "mainCals";
+
+    dispatch(calsFetch(group));
+
+    Spark.getVariable(deviceName, deviceCals)
+    .then(function(payload) {
+      let rawData = JSON.parse(payload.result);
+      let data = {
+        targetTemperature: rawData.sp,
+        proportional: rawData.Kp,
+        integral: rawData.Ki,
+        offset: rawData.Ko
+      };
+
+      dispatch(calsReceive(group, data));
+    })
+    .catch(function(err) {
+      dispatch(calsFailure(group));
+      console.log(err);
+    });
+  };
+}
+
+export function fetchWakeupTime() {
+  return function(dispatch) {
+    let group = "sleepCals";
+
+    dispatch(calsFetch(group));
+
+    Spark.callFunction(deviceName, "get", deviceWakeupTime)
+    .then(function() {
+      return Spark.getVariable(deviceWakeupTime, "result");
+    })
+    .then(function(payload) {
+      let wakeupTime = JSON.parse(payload);
+
+      dispatch(calsReceive(group, {wakeupTime}));
+    })
+    .catch(function(err) {
+      dispatch(calsFailure(group));
+      console.log(err);
+    });
   };
 }

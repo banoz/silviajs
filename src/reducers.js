@@ -2,7 +2,8 @@ import { combineReducers } from "redux";
 import PersistentState from "./PersistentState";
 import { NAVIGATE,
   LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS,
-  DATA_STREAM, DATA_RECEIVE
+  DATA_STREAM, DATA_RECEIVE,
+  CALS_FETCH, CALS_RECEIVE, CALS_FAILURE
 } from "./actions";
 
 const defaultPage = "login";
@@ -73,10 +74,51 @@ function variables(state = defaultVariables, action) {
   }
 }
 
+const defaultCals = {
+  state: {
+    mainCals: "not loaded",
+    sleepCals: "not loaded"
+  },
+  data: {
+    targetTemperature: null,
+    proportional: null,
+    integral: null,
+    offset: null,
+    wakeupTime: null
+  }
+};
+
+function calibrations(state = defaultCals, action) {
+  switch(action.type) {
+    case CALS_FETCH:
+      return Object.assign({}, state, {
+        state: {
+          [action.group]: "fetching"
+        }
+      });
+    case CALS_FAILURE:
+      return Object.assign({}, state, {
+        state: {
+          [action.group]: "not loaded"
+        }
+      });
+    case CALS_RECEIVE:
+      return Object.assign({}, state, {
+        state: {
+          [action.group]: "loaded"
+        },
+        data: Object.assign({}, state.data, action.data)
+      });
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   page,
   login,
-  variables
+  variables,
+  calibrations
 });
 
 export default rootReducer;

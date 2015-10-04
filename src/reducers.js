@@ -1,7 +1,8 @@
 import { combineReducers } from "redux";
 import PersistentState from "./PersistentState";
 import { NAVIGATE,
-  LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS
+  LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS,
+  DATA_STREAM, DATA_RECEIVE
 } from "./actions";
 
 const defaultPage = "login";
@@ -45,9 +46,37 @@ function login(state = defaultLogin, action) {
   }
 }
 
+const defaultVariables = {
+  request: null,
+  data: {
+    temperature: null,
+    power: null,
+    error: null,
+    sleep: null,
+    iPart: null,
+    pPart: null
+  }
+};
+
+function variables(state = defaultVariables, action) {
+  switch(action.type) {
+    case DATA_STREAM:
+      return Object.assign({}, state, {
+        request: action.request
+      });
+    case DATA_RECEIVE:
+      return Object.assign({}, state, {
+        data: action.data
+      });
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   page,
-  login
+  login,
+  variables
 });
 
 export default rootReducer;

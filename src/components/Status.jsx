@@ -1,15 +1,17 @@
 import React, { Component, PropTypes } from "react";
+import { roundPrec } from "../lib/round";
 
 class Status extends Component {
   renderTemperature() {
     if (this.props.sleeping) {
       return (<i className="silvia silvia-sleep"></i>);
     }
-    return this.props.temperature;
+
+    return roundPrec(this.props.temperature, 0);
   }
 
   render() {
-    var power = this.props.power;
+    var power = this.props.power || 0;
     var powerRound = Math.round(power);
     var powerLog = power > 1.0 ? 50 * Math.log10(power) : 0;
 

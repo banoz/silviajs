@@ -7,7 +7,6 @@ class LoginForm extends Component {
       email: "",
       password: ""
     };
-    this.handleChange = this.handleChange.bind(this);
   }
 
   handleChange(event) {
@@ -16,11 +15,22 @@ class LoginForm extends Component {
     });
   }
 
+  handleLogin(event) {
+    event.preventDefault();
+    this.props.handleLogin(this.state.email, this.state.password);
+  }
+
   render() {
     var inProgress = this.props.inProgress;
     var busyIcon = <i className="glyphicon glyphicon-hourglass"></i>;
     var failureMessage = this.props.failed ?
       <div className="error">Invalid email or password</div> : "";
+    var fieldProps = {
+      className: "form-control",
+      disabled: inProgress,
+      required: true,
+      onChange: this.handleChange.bind(this)
+    };
 
     return (
       <div>
@@ -29,13 +39,11 @@ class LoginForm extends Component {
         </div>
         <section>
           <h2 className="text-center">Log in</h2>
-          <form className="login-form" onSubmit={this.props.handleLogin}>
-            <input type="email" className="form-control" name="email"
-              placeholder="Particle.io email" disabled={inProgress} required
-              value={this.state.email} onChange={this.handleChange} />
-            <input type="password" className="form-control" name="password"
-              placeholder="Particle.io password" disabled={inProgress} required
-              value={this.state.password} onChange={this.handleChange} />
+          <form className="login-form" onSubmit={this.handleLogin.bind(this)}>
+            <input type="email" name="email" value={this.state.email}
+              placeholder="Particle.io email" {...fieldProps} />
+            <input type="password" name="password" value={this.state.password}
+              placeholder="Particle.io password" {...fieldProps} />
             {failureMessage}
             <button type="submit" className="btn btn-warning btn-block"
               disabled={inProgress}>

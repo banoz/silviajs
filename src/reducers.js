@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import PersistentState from "./PersistentState";
 import { NAVIGATE,
   LOGIN_REQUEST, LOGIN_FAILURE, LOGIN_SUCCESS
 } from "./actions";
@@ -14,7 +15,14 @@ function page(state = defaultPage, action) {
   }
 }
 
-function login(state = null, action) {
+const defaultLogin = Object.assign({},
+  PersistentState.load(), {
+    inProgress: false,
+    failed: false
+  }
+);
+
+function login(state = defaultLogin, action) {
   switch(action.type) {
     case LOGIN_REQUEST:
       return Object.assign({}, state, {

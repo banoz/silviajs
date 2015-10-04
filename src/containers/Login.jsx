@@ -4,10 +4,9 @@ import LoginForm from "../components/LoginForm.jsx";
 import { loginToParticle } from "../actions";
 
 class Login extends Component {
-  handleLogin(event) {
-    event.preventDefault();
+  handleLogin(email, password) {
     this.props.dispatch(
-      loginToParticle(event.target.email, event.target.password)
+      loginToParticle(email, password)
     );
   }
 

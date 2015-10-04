@@ -1,4 +1,4 @@
-import Spark from "../vendor/spark/spark.js";
+// Spark library is loaded from a CDN and available as window.spark
 
 // Action types
 export const LOGIN_REQUEST = "login_request";
@@ -39,7 +39,7 @@ export function loginSuccessful(token) {
 export function loginToParticle(email, password) {
   return function(dispatch) {
     dispatch(loginRequest());
-    Spark.login({
+    window.spark.login({
       username: email,
       password: password
     }, function(err, data) {

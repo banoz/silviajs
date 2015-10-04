@@ -29,14 +29,20 @@ var config = {
       {
         test: /(\.jsx|\.js)$/,
         loader: 'babel',
-        exclude: /(node_modules|bower_components)/
+        exclude: /(node_modules|bower_components|vendor)/
       },
       {
         test: /(\.jsx|\.js)$/,
         loader: "eslint-loader",
-        exclude: /node_modules/
+        exclude: /node_modules|vendor/
       }
     ]
+  },
+  externals: {
+    fs: '{}',
+    tls: '{}',
+    net: '{}',
+    console: '{}'
   },
   plugins: plugins
 };

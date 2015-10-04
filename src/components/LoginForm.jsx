@@ -19,6 +19,8 @@ class LoginForm extends Component {
   render() {
     var inProgress = this.props.inProgress;
     var busyIcon = <i className="glyphicon glyphicon-hourglass"></i>;
+    var failureMessage = this.props.failed ?
+      <div className="error">Invalid email or password</div> : "";
 
     return (
       <div>
@@ -29,11 +31,12 @@ class LoginForm extends Component {
           <h2 className="text-center">Log in</h2>
           <form className="login-form" onSubmit={this.props.handleLogin}>
             <input type="email" className="form-control" name="email"
-              placeholder="Particle.io email" disabled={inProgress}
+              placeholder="Particle.io email" disabled={inProgress} required
               value={this.state.email} onChange={this.handleChange} />
             <input type="password" className="form-control" name="password"
-              placeholder="Particle.io password" disabled={inProgress}
+              placeholder="Particle.io password" disabled={inProgress} required
               value={this.state.password} onChange={this.handleChange} />
+            {failureMessage}
             <button type="submit" className="btn btn-warning btn-block"
               disabled={inProgress}>
               {inProgress ? busyIcon : "Log in"}
@@ -47,6 +50,7 @@ class LoginForm extends Component {
 
 LoginForm.propTypes = {
   inProgress: PropTypes.bool.isRequired,
+  failed: PropTypes.bool.isRequired,
   handleLogin: PropTypes.func.isRequired
 };
 

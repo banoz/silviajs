@@ -14,14 +14,15 @@ class Login extends Component {
   render() {
     return (
       <LoginForm handleLogin={this.handleLogin.bind(this)}
-        inProgress={this.props.login.inProgress} />
+        inProgress={this.props.login.inProgress}
+        failed={this.props.login.failed} />
     );
   }
 }
 
 Login.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  login: PropTypes.node.isRequired
+  login: PropTypes.object.isRequired
 };
 
 function select(state) {

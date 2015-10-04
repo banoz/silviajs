@@ -49,9 +49,10 @@
     "redux": "3.0.2",
     "redux-logger": "2.0.1",
     "redux-thunk": "1.0.0",
-    "spark": "1.0.0",
+    "request": ">= 2.55.0",
     "watch": "0.16.0",
     "webpack": "1.12.2",
-    "webpack-dev-server": "1.11.0"
+    "webpack-dev-server": "1.11.0",
+    "when": ">= 3.4.4"
   }
 }

@@ -1,3 +1,4 @@
+import Spark from "../vendor/spark/spark.js";
 
 // Action types
 export const LOGIN_REQUEST = "login_request";
@@ -8,9 +9,28 @@ export const NAVIGATE = "navigate";
 
 // Action creators
 
+export function navigateTo(page) {
+  return {
+    type: NAVIGATE,
+    page
+  };
+}
 export function loginRequest() {
   return {
     type: LOGIN_REQUEST
+  };
+}
+
+export function loginFailed() {
+  return {
+    type: LOGIN_FAILURE
+  };
+}
+
+export function loginSuccessful(token) {
+  return {
+    type: LOGIN_SUCCESS,
+    token
   };
 }
 
@@ -19,12 +39,16 @@ export function loginRequest() {
 export function loginToParticle(email, password) {
   return function(dispatch) {
     dispatch(loginRequest());
-  };
-}
-
-export function navigateTo(page) {
-  return {
-    type: NAVIGATE,
-    page
+    Spark.login({
+      username: email,
+      password: password
+    }, function(err, data) {
+      if(err) {
+        dispatch(loginFailed());
+      } else {
+        dispatch(loginSuccessful(data.accessToken));
+        dispatch(navigateTo("status"));
+      }
+    });
   };
 }

@@ -20,7 +20,8 @@ function page(state = defaultPage, action) {
 const defaultLogin = Object.assign({},
   PersistentState.load(), {
     inProgress: false,
-    failed: false
+    failed: false,
+    token: null
   }
 );
 
@@ -34,7 +35,8 @@ function login(state = defaultLogin, action) {
     case LOGIN_FAILURE:
       return Object.assign({}, state, {
         inProgress: false,
-        failed: true
+        failed: true,
+        token: null
       });
     case LOGIN_SUCCESS:
       return Object.assign({}, state, {
@@ -74,45 +76,51 @@ function variables(state = defaultVariables, action) {
   }
 }
 
-const defaultCals = {
-  state: {
-    mainCals: "not loaded",
-    sleepCals: "not loaded"
-  },
-  data: {
-    targetTemperature: null,
-    proportional: null,
-    integral: null,
-    offset: null,
-    wakeupTime: null
-  }
+const defaultCalsState = {
+  mainCals: "not loaded",
+  sleepCals: "not loaded"
 };
 
-function calibrations(state = defaultCals, action) {
+function calibrationState(state = defaultCalsState, action) {
   switch(action.type) {
     case CALS_FETCH:
-      return Object.assign({}, state, {
-        state: {
-          [action.group]: "fetching"
-        }
-      });
     case CALS_FAILURE:
-      return Object.assign({}, state, {
-        state: {
-          [action.group]: "not loaded"
-        }
-      });
     case CALS_RECEIVE:
+      let loadingState = {
+        [CALS_FETCH]: "fetching",
+        [CALS_FAILURE]: "not loaded",
+        [CALS_RECEIVE]: "loaded"
+      };
+
       return Object.assign({}, state, {
-        state: {
-          [action.group]: "loaded"
-        },
-        data: Object.assign({}, state.data, action.data)
+        [action.group]: loadingState[action.type]
       });
     default:
       return state;
   }
 }
+
+const defaultCalsData = {
+  targetTemperature: null,
+  proportional: null,
+  integral: null,
+  offset: null,
+  wakeupTime: null
+};
+
+function calibrationsData(state = defaultCalsData, action) {
+  switch(action.type) {
+    case CALS_RECEIVE:
+      return Object.assign({}, state, action.data);
+    default:
+      return state;
+  }
+}
+
+const calibrations = combineReducers({
+  state: calibrationState,
+  data: calibrationsData
+});
 
 const rootReducer = combineReducers({
   page,

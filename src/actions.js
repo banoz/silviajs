@@ -159,10 +159,10 @@ export function fetchWakeupTime() {
 
     Spark.callFunction(deviceName, "get", deviceWakeupTime)
     .then(function() {
-      return Spark.getVariable(deviceWakeupTime, "result");
+      return Spark.getVariable(deviceName, "result");
     })
     .then(function(payload) {
-      let wakeupTime = JSON.parse(payload);
+      let wakeupTime = JSON.parse(payload.result);
 
       dispatch(calsReceive(group, {wakeupTime}));
     })

@@ -10,7 +10,7 @@ class Sleep extends Component {
 
   sleep(start) {
     if (start) {
-      console.log(`Sleeping until ${this.timeFromTimestamp(this.props.wakeTime)}`);
+      console.log(`Sleeping until ${this.timeFromTimestamp(this.props.wakeupTime)}`);
     } else {
       console.log("Waking up");
     }
@@ -26,12 +26,12 @@ class Sleep extends Component {
   timeFromTimestamp(timestamp) {
     var options = { hour: "numeric", minute: "numeric" };
 
-    return new Date(timestamp).toLocaleTimeString("en-US", options);
+    return new Date(timestamp * 1000).toLocaleTimeString("en-US", options);
   }
 
   render() {
     let loaded = this.props.loaded;
-    let wakeTime = loaded ? this.timeFromTimestamp(this.props.wakeTime) : "–";
+    let wakeupTime = loaded ? this.timeFromTimestamp(this.props.wakeupTime) : "–";
 
     return (
       <article>
@@ -40,8 +40,8 @@ class Sleep extends Component {
 
           <h2><button className="btn btn-warning btn-lg" onClick={this.sleep(true)}>Sleep</button>
             {" until "}
-            <td><CalValue value={wakeTime}
-              onChange={this.onChange("wakeTime")} /></td>
+            <td><CalValue value={wakeupTime}
+              onChange={this.onChange("wakeupTime")} /></td>
           </h2>
 
           <h2><button className="btn btn-success btn-lg" onClick={this.sleep(false)}>Wake up!</button></h2>
@@ -58,7 +58,7 @@ class Sleep extends Component {
 Sleep.propTypes = {
   onMount: PropTypes.func.isRequired,
   loaded: PropTypes.bool.isRequired,
-  wakeTime: PropTypes.number
+  wakeupTime: PropTypes.number
 };
 
 export default Sleep;

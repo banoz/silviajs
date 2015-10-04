@@ -26,5 +26,11 @@ export default {
       wakeupTime: "Twakeup",
       sleeping: "sleep"
     }[name];
+  },
+  calibrationFirmwareValue: function(name, value) {
+    if(name === "sleeping") {
+      return value ? 1 : 0;
+    }
+    return value;
   }
 };

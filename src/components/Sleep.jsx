@@ -1,35 +1,34 @@
 import React, { PropTypes } from "react";
 import PureComponent from "./PureComponent";
 import CalValue from "./CalValue.jsx";
-import moment from "moment";
+import nextTimestamp from "../lib/nextTimestamp";
 
 class Sleep extends PureComponent {
   constructor(props) {
     super(props);
     this.onSleep = this.onSleep.bind(this);
-    this.parseAndHandle = this.parseAndHandle.bind(this);
+    this.onWake = this.onWake.bind(this);
+    this.handleTime = this.handleTime.bind(this);
   }
 
-  onSleep(start) {
-    this.props.handleChange("sleeping", start);
+  onSleep() {
+    this.props.handleChange("sleeping", true);
   }
 
-  parseAndHandle(event) {
-    // May replace by Date.parse("2015-10-4 " + value);
-    let now = moment();
-    let time = moment(event.target.value, "h:m a");
+  onWake() {
+    this.props.handleChange("sleeping", false);
+  }
 
-    time.set({
-      day: now.day(),
-      month: now.month(),
-      year: now.year()
-    });
+  handleTime(event) {
+    const MS_PER_S = 1000;
+    let now = new Date();
+    let timestamp = Date.parse(
+      `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()} ${event.target.value}`
+    ) / MS_PER_S;
 
-    if(time.isBefore(now)) {
-      time.add(1, "day");
-    }
+    timestamp = nextTimestamp(timestamp, now);
 
-    this.props.handleChange("wakeupTime", time.unix());
+    this.props.handleChange("wakeupTime", timestamp);
   }
 
   timeFromTimestamp(timestamp) {
@@ -47,13 +46,13 @@ class Sleep extends PureComponent {
         <section className="calibratable">
           <h1>Sleep Timer</h1>
 
-          <h2><button className="btn btn-warning btn-lg" onClick={this.onSleep(true)}>Sleep</button>
+          <h2><button className="btn btn-warning btn-lg" onClick={this.onSleep}>Sleep</button>
             {" until "}
             <td><CalValue value={wakeupTime}
-              onChange={this.parseAndHandle} /></td>
+              onChange={this.handleTime} /></td>
           </h2>
 
-          <h2><button className="btn btn-success btn-lg" onClick={this.onSleep(false)}>Wake up!</button></h2>
+          <h2><button className="btn btn-success btn-lg" onClick={this.onWake}>Wake up!</button></h2>
         </section>
       </article>
     );

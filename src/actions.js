@@ -174,8 +174,9 @@ export function fetchWakeupTime() {
 export function setCalibration(cal, value) {
   return function(dispatch) {
     let firmwareCal = FirmwareDataMapper.calibrationFirmwareName(cal);
+    let firmwareValue = FirmwareDataMapper.calibrationFirmwareValue(cal, value);
 
-    Spark.callFunction(deviceName, "set", `${firmwareCal}=${value}`)
+    Spark.callFunction(deviceName, "set", `${firmwareCal}=${firmwareValue}`)
     .then(function() {
       dispatch(calsSet({ [cal]: value }));
     })

@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
+import nextTimestamp from "../lib/nextTimestamp";
 import Header from "../containers/Header.jsx";
 import Footer from "../components/Footer.jsx";
 import Status from "../components/Status.jsx";
@@ -53,7 +54,24 @@ class Main extends Component {
   }
 
   handleCalChange(field, value) {
-    value = parseFloat(value);
+    switch(field) {
+      case "sleeping":
+        let wakeupTime = this.props.calibrations.data.wakeupTime;
+
+        if(wakeupTime) {
+          wakeupTime = nextTimestamp(wakeupTime);
+
+          this.props.dispatch(setCalibration("wakeupTime", wakeupTime));
+        }
+        this.props.dispatch(setCalibration(field, value));
+        break;
+      case "wakeupTime":
+        // no additional parsing
+        break;
+      default:
+        value = parseFloat(value);
+        break;
+    }
     this.props.dispatch(setCalibration(field, value));
   }
 }

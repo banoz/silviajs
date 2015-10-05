@@ -11,10 +11,11 @@ class CalValue extends Component {
   render() {
     return (
       <span
+        className="editable"
         {...this.props}
         onKeyDown={this.keyDown}
         onBlur={this.emitChange}
-        contentEditable="true"
+        contentEditable={!this.props.disabled}
         dangerouslySetInnerHTML={{__html: this.props.value}}></span>
     );
   }
@@ -50,6 +51,7 @@ class CalValue extends Component {
 
 CalValue.propTypes = {
   value: PropTypes.node.isRequired,
+  disabled: PropTypes.boolean,
   onChange: PropTypes.func.isRequired
 };
 

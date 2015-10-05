@@ -43,7 +43,7 @@ class Calibrate extends PureComponent {
               <tr>
                 <td>{roundPrec(this.props.error, 1)}</td>
                 <td>=</td>
-                <td><CalValue value={roundPrec(this.props.targetTemperature, 1)}
+                <td><CalValue value={roundPrec(this.props.targetTemperature, 1)} disabled={!loaded}
                   onChange={this.onChange("targetTemperature")} /></td>
                 <td>-</td>
                 <td>{roundPrec(this.props.temperature, 1)}</td>
@@ -69,10 +69,10 @@ class Calibrate extends PureComponent {
               <tr>
                 <td>{roundPrec(this.props.power, 1)}</td>
                 <td>=</td>
-                <td><CalValue value={roundPrec(this.props.offset, 1)}
+                <td><CalValue value={roundPrec(this.props.offset, 1)} disabled={!loaded}
                   onChange={this.onChange("offset")} /></td>
                 <td>+</td>
-                <td><CalValue value={roundPrec(this.props.proportional, 1)}
+                <td><CalValue value={roundPrec(this.props.proportional, 1)} disabled={!loaded}
                   onChange={this.onChange("proportional")} /></td>
                 <td>&times;</td>
                 <td>{roundPrec(this.props.error, 1)}</td>
@@ -100,7 +100,7 @@ class Calibrate extends PureComponent {
                 <td>=</td>
                 <td>{roundPrec(iPartOld, 1)}</td>
                 <td>+</td>
-                <td><CalValue value={roundPrec(this.props.integral, 3)}
+                <td><CalValue value={roundPrec(this.props.integral, 3)} disabled={!loaded}
                   onChange={this.onChange("integral")} /></td>
                 <td>&times;</td>
                 <td>{roundPrec(this.props.error, 1)}</td>

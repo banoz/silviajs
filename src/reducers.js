@@ -6,7 +6,7 @@ import { NAVIGATE,
   CALS_FETCH, CALS_RECEIVE, CALS_SET, CALS_FAILURE
 } from "./actions";
 
-const defaultPage = "login";
+const defaultPage = "status";
 
 function page(state = defaultPage, action) {
   switch(action.type) {
@@ -17,13 +17,11 @@ function page(state = defaultPage, action) {
   }
 }
 
-const defaultLogin = Object.assign({},
-  PersistentState.load(), {
-    inProgress: false,
-    failed: false,
-    token: null
-  }
-);
+const defaultLogin = {
+  inProgress: false,
+  failed: false,
+  token: PersistentState.loadToken()
+};
 
 function login(state = defaultLogin, action) {
   switch(action.type) {

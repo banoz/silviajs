@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
 import Login from "../containers/Login.jsx";
 import Main from "../containers/Main.jsx";
+import { loginWithToken } from "../actions";
 
 class App extends Component {
   render() {
@@ -14,28 +15,36 @@ class App extends Component {
     );
   }
 
-  renderPage() {
-    switch(this.props.page) {
-      case "login":
-        return (
-          <Login />
-        );
-      default:
-        return (
-          <Main />
-        );
+  componentWillMount() {
+    this.applyToken();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.applyToken();
+  }
+
+  applyToken() {
+    if(this.props.token) {
+      this.props.dispatch(loginWithToken(this.props.token));
     }
+  }
+
+  renderPage() {
+    if(this.props.token) {
+      return <Main />;
+    }
+    return <Login />;
   }
 }
 
 App.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  page: PropTypes.string.isRequired
+  token: PropTypes.string
 };
 
 function select(state) {
   return {
-    page: state.page
+    token: state.login.token
   };
 }
 

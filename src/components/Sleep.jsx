@@ -46,13 +46,15 @@ class Sleep extends PureComponent {
         <section className="calibratable">
           <h1>Sleep Timer</h1>
 
-          <h2><button className="btn btn-warning btn-lg" onClick={this.onSleep}>Sleep</button>
+          <h2><button className="btn btn-warning btn-lg" disabled={!loaded}
+            onClick={this.onSleep}>Sleep</button>
             {" until "}
-            <td><CalValue value={wakeupTime}
+            <td><CalValue value={wakeupTime} disabled={!loaded}
               onChange={this.handleTime} /></td>
           </h2>
 
-          <h2><button className="btn btn-success btn-lg" onClick={this.onWake}>Wake up!</button></h2>
+          <h2><button className="btn btn-success btn-lg" disabled={!loaded}
+            onClick={this.onWake}>Wake up!</button></h2>
         </section>
       </article>
     );

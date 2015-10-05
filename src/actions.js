@@ -1,5 +1,6 @@
 import Spark from "./lib/spark";
 import FirmwareDataMapper from "./lib/FirmwareDataMapper";
+import PersistentState from "./PersistentState";
 
 // Action types
 export const LOGIN_REQUEST = "login_request";
@@ -55,9 +56,18 @@ export function loginToParticle(email, password) {
       if(err) {
         dispatch(loginFailed());
       } else {
+        // TODO: This doesn't belong here. Maybe a custom middleware could be used
+        PersistentState.saveToken(data.access_token);
         dispatch(loginSuccessful(data.access_token));
-        dispatch(navigateTo("status"));
       }
+    });
+  };
+}
+
+export function loginWithToken(token) {
+  return function() {
+    Spark.login({
+      accessToken: token
     });
   };
 }
@@ -94,6 +104,12 @@ export function subscribeToDeviceData() {
       }
     });
 
+    // If the token is invalid, kick back to login screen
+    request.onload = function(event) {
+      if(event.target.status === 401) {
+        dispatch(loginFailed());
+      }
+    };
     // Save the XMLHttpRequest to be able to abort it later
     dispatch(dataStream(request));
   };

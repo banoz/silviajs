@@ -5,6 +5,8 @@
 #ifndef __STORAGE_H__
 #define __STORAGE_H__
 
+#include <stdint.h>
+
 class Storage {
   public:
     void read();
@@ -31,10 +33,10 @@ class Storage {
 
     void migrate();
 
-    unsigned int getVersion();
-    void setVersion(unsigned int value);
+    uint32_t getVersion();
+    void setVersion(uint32_t value);
 
-    void save(int addr, unsigned int length);
+    void save();
 
     /* This struct must not be re-ordered since it is the EEPROM layout.
      * Elements must not be deleted.
@@ -42,7 +44,7 @@ class Storage {
      * Elements must only be added at the end.
      */
     struct Data {
-      unsigned int version;
+      uint32_t Version;
 
       double TargetTemperature;
       double Kp;
@@ -54,6 +56,7 @@ class Storage {
       double Twakeup;
     } data;
 
+    static const uint16_t eepromOffset;
     static const Data DEFAULT_DATA;
 };
 

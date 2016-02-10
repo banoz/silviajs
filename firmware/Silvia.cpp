@@ -21,13 +21,18 @@
 // For direct access to delay
 #include "delay_hal.h"
 
+// Precise timer thread timing
+#include "periodic_work.h"
+
+// Debounced button
+#include "clickButton.h"
+
 SYSTEM_MODE(SEMI_AUTOMATIC);
 
-void setupStorage();
 void startHardwareThread();
+void startButtonThread();
 void setupCloud();
 void setupRelay();
-void setupDisplay();
 int enterDFU(String arg);
 void publishData();
 void updateCals();
@@ -35,6 +40,7 @@ void updateCals();
 void hardwareSetup();
 void hardwareLoop();
 void resetDisplay();
+void toggleSleep();
 void processSleep();
 void readTemperature();
 void controlTemperature();
@@ -62,6 +68,9 @@ const int RELAY_POWER_PIN = D6;
 const int EXTERNAL_LED_PIN = D3;
 #endif
 
+ClickButton sleepButton(D2, LOW, CLICKBTN_PULLUP);
+bool gotoSleep = false;
+
 const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
 
@@ -85,9 +94,25 @@ void startHardwareThread() {
     }, OS_THREAD_PRIORITY_DEFAULT + 1);
 }
 
+void startButtonThread() {
+    Thread("button", []() {
+        // 10ms periodic task
+        PeriodicWork work(10);
+
+        for(;;) {
+            work.start();
+            sleepButton.Update();
+            if(sleepButton.clicks == 1) {
+                gotoSleep = true;
+            }
+            work.end();
+        }
+    }, OS_THREAD_PRIORITY_DEFAULT + 1);
+}
+
 void hardwareSetup() {
     setupRelay();
-    setupDisplay();
+    display.begin();
 }
 
 void setupRelay() {
@@ -97,13 +122,14 @@ void setupRelay() {
     digitalWrite(RELAY_PIN, RELAY_OFF);
 }
 
-void setupDisplay() {
-    display.begin();
-}
-
 void hardwareLoop() {
     resetDisplay();
-    if(storage.getSleep() == 1) {
+    if(gotoSleep) {
+        toggleSleep();
+        gotoSleep = false;
+    }
+
+    if(storage.getSleep()) {
         processSleep();
     } else {
         readTemperature();
@@ -179,9 +205,25 @@ void commandRelay() {
     }
 }
 
+void toggleSleep() {
+    if(storage.getSleep()) {
+        storage.setSleep(0);
+    } else {
+        const long SECONDS_PER_DAY = 24 * 60 * 60;
+
+        long sleepDuration = (long)storage.getTwakeup() - Time.now();
+        if(sleepDuration < 0) {
+            long additionalDays = (-sleepDuration / SECONDS_PER_DAY + 1) * SECONDS_PER_DAY;
+            storage.setTwakeup(storage.getTwakeup() + additionalDays);
+        }
+
+        storage.setSleep(1);
+    }
+}
+
 void processSleep() {
     display.printDodo();
-    if(Time.now() > (int)storage.getTwakeup()) {
+    if(Time.now() > (long)storage.getTwakeup()) {
         storage.setSleep(0);
     }
 
@@ -190,20 +232,17 @@ void processSleep() {
 
 void setup() {
     Serial.begin(115200);
-    setupStorage();
-    startHardwareThread();
-    setupCloud();
-}
-
-void setupStorage() {
     storage.read();
+    startHardwareThread();
+    startButtonThread();
+    setupCloud();
 }
 
 void setupCloud() {
     Particle.connect();
     Particle.variable("temp", &temperature, DOUBLE);
     Particle.variable("dc", &relayDc, DOUBLE);
-    Particle.variable("cals", &cals, STRING);
+    Particle.variable("cals", cals, STRING);
     Particle.function("dfu", enterDFU);
     cloudStorage.setup(&storage);    
 }

@@ -6,8 +6,10 @@
 #include "helpers.h"
 #include "application.h"
 
+const uint16_t Storage::eepromOffset = 0;
+
 const Storage::Data Storage::DEFAULT_DATA = {
-  /* version */ 1,
+  /* Version */ 1,
   /* TargetTemperature */ 96.0,
   /* Kp                */ 2.0,
   /* Ki                */ 0.01,
@@ -19,26 +21,21 @@ const Storage::Data Storage::DEFAULT_DATA = {
 };
 
 void Storage::read() {
-  uint8_t *dataBytes = (uint8_t *)&this->data;
-  const unsigned int data_size = sizeof(Storage::Data);
-
-  for(int addr = 0; addr < (int)data_size; addr++) {
-    dataBytes[addr] = EEPROM.read(addr);
-  }
-
-  this->migrate();
+  EEPROM.get(eepromOffset, data);
+  migrate();
 }
 
 void Storage::migrate() {
   const unsigned int data_size = sizeof(Storage::Data);
 
-  while(this->getVersion() != Storage::DEFAULT_DATA.version) {
-    switch(this->getVersion()) {
+  while(getVersion() != DEFAULT_DATA.Version) {
+    switch(getVersion()) {
       case 0:
         /* Sleep and Twakeup added */
-        this->setSleep(Storage::DEFAULT_DATA.Sleep);
-        this->setTwakeup(Storage::DEFAULT_DATA.Twakeup);
-        this->setVersion(1);
+        data.Sleep = DEFAULT_DATA.Sleep;
+        data.Twakeup = DEFAULT_DATA.Twakeup;
+        data.Version = 1;
+        save();
         break;
 
       case 1:
@@ -47,117 +44,112 @@ void Storage::migrate() {
 
       default:
         /* EEPROM was erased */
-        memcpy(&this->data, &Storage::DEFAULT_DATA, data_size);
-        save(0, data_size);
+        memcpy(&data, &DEFAULT_DATA, sizeof(DEFAULT_DATA));
+        save();
         break;
     }
   }
 }
 
-void Storage::save(int addr, unsigned int length) {
-  uint8_t *dataBytes = (uint8_t *)&this->data;
-
-  for(; length > 0; addr++, length--) {
-    uint8_t byte = dataBytes[addr];
-    EEPROM.write(addr, byte);
-  }
+void Storage::save() {
+  EEPROM.put(eepromOffset, data);
 }
 
-unsigned int Storage::getVersion() {
-  return this->data.version;
+uint32_t Storage::getVersion() {
+  return data.Version;
 }
 
 double Storage::getTargetTemperature() {
-  return this->data.TargetTemperature;
+  return data.TargetTemperature;
 }
 
 double Storage::getKp() {
-  return this->data.Kp;
+  return data.Kp;
 }
 
 double Storage::getKi() {
-  return this->data.Ki;
+  return data.Ki;
 }
 
 double Storage::getKo() {
-  return this->data.Ko;
+  return data.Ko;
 }
 
 double Storage::getiTermSaturation() {
-  return this->data.iTermSaturation;
+  return data.iTermSaturation;
 }
 
 double Storage::getIntegralErrorBand() {
-  return this->data.IntegralErrorBand;
+  return data.IntegralErrorBand;
 }
 
 double Storage::getSleep() {
-  return this->data.Sleep;
+  return data.Sleep;
 }
 
 double Storage::getTwakeup() {
-  return this->data.Twakeup;
+  return data.Twakeup;
 }
 
-void Storage::setVersion(unsigned int value) {
-  if(this->data.version != value) {
-    this->data.version = value;
-    save(offsetof_and_sizeof(Storage::Data, version));
+void Storage::setVersion(uint32_t value) {
+  if(data.Version != value) {
+    data.Version = value;
+    save();
   }
 }
 
 void Storage::setTargetTemperature(double value) {
-  if(this->data.TargetTemperature != value) {
-    this->data.TargetTemperature = value;
-    save(offsetof_and_sizeof(Storage::Data, TargetTemperature));
+  if(data.TargetTemperature != value) {
+    data.TargetTemperature = value;
+    save();
   }
 }
 
 void Storage::setKp(double value) {
-  if(this->data.Kp != value) {
-    this->data.Kp = value;
-    save(offsetof_and_sizeof(Storage::Data, Kp));
+  if(data.Kp != value) {
+    data.Kp = value;
+    save();
   }
 }
 
 void Storage::setKi(double value) {
-  if(this->data.Ki != value) {
-    this->data.Ki = value;
-    save(offsetof_and_sizeof(Storage::Data, Ki));
+  if(data.Ki != value) {
+    data.Ki = value;
+    save();
   }
 }
 
 void Storage::setKo(double value) {
-  if(this->data.Ko != value) {
-    this->data.Ko = value;
-    save(offsetof_and_sizeof(Storage::Data, Ko));
+  if(data.Ko != value) {
+    data.Ko = value;
+    save();
   }
 }
 
 void Storage::setiTermSaturation(double value) {
-  if(this->data.iTermSaturation != value) {
-    this->data.iTermSaturation = value;
-    save(offsetof_and_sizeof(Storage::Data, iTermSaturation));
+  if(data.iTermSaturation != value) {
+    data.iTermSaturation = value;
+    save();
   }
 }
 
 void Storage::setIntegralErrorBand(double value) {
-  if(this->data.IntegralErrorBand != value) {
-    this->data.IntegralErrorBand = value;
-    save(offsetof_and_sizeof(Storage::Data, IntegralErrorBand));
+  if(data.IntegralErrorBand != value) {
+    data.IntegralErrorBand = value;
+    save();
   }
 }
 
 void Storage::setSleep(double value) {
-  if(this->data.Sleep != value) {
-    this->data.Sleep = value;
-    save(offsetof_and_sizeof(Storage::Data, Sleep));
+  if(data.Sleep != value) {
+    data.Sleep = value;
+    save();
   }
 }
 
 void Storage::setTwakeup(double value) {
-  if(this->data.Twakeup != value) {
-    this->data.Twakeup = value;
-    save(offsetof_and_sizeof(Storage::Data, Twakeup));
+  if(data.Twakeup != value) {
+    data.Twakeup = value;
+    save();
   }
 }

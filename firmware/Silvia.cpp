@@ -37,6 +37,7 @@ int enterDFU(String arg);
 void publishData();
 void updateCals();
 
+void processButtonClicks();
 void hardwareSetup();
 void hardwareLoop();
 void resetDisplay();
@@ -70,6 +71,10 @@ const int EXTERNAL_LED_PIN = D3;
 
 ClickButton sleepButton(D2, LOW, CLICKBTN_PULLUP);
 bool gotoSleep = false;
+enum ClickButtonStates {
+    SINGLE_LONG_CLICK = -1,
+    SINGLE_CLICK = 1
+};
 
 const int RELAY_ON = LOW;
 const int RELAY_OFF = HIGH;
@@ -102,14 +107,18 @@ void startButtonThread() {
         for(;;) {
             work.start();
             sleepButton.Update();
-            if(sleepButton.clicks == 1) {
-                gotoSleep = true;
-            }
+            processButtonClicks();
             work.end();
         }
     }, OS_THREAD_PRIORITY_DEFAULT + 1);
 }
 
+void processButtonClicks() {
+    switch(sleepButton.clicks) {
+        case SINGLE_CLICK: gotoSleep = true; break;
+        case SINGLE_LONG_CLICK: System.dfu(); break;
+    }
+}
 void hardwareSetup() {
     setupRelay();
     display.begin();
@@ -140,7 +149,7 @@ void hardwareLoop() {
 
 void resetDisplay() {
     HAL_I2C_End(HAL_I2C_INTERFACE1, NULL);
-    delay(1);
+    HAL_Delay_Milliseconds(1);
     HAL_I2C_Begin(HAL_I2C_INTERFACE1, I2C_MODE_MASTER, 0x00, NULL);
 
 }
@@ -197,7 +206,8 @@ void commandRelay() {
     if(onTime > 0) {
         digitalWrite(RELAY_PIN, RELAY_ON);
         display.setLastDot(true);
-        delay(onTime);
+        // Bypass system event pump in usual delay()
+        HAL_Delay_Milliseconds(onTime);
         digitalWrite(RELAY_PIN, RELAY_OFF);
         display.setLastDot(false);
     } else {

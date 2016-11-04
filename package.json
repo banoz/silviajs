@@ -17,6 +17,7 @@
     "url": "git@github.com:monkbroc/silviajs.git"
   },
   "scripts": {
+    "start": "npm run dev",
     "dev": "WEBPACK_ENV=dev ./node_modules/.bin/webpack --watch --inline",
     "build": "WEBPACK_ENV=build ./node_modules/.bin/webpack",
     "test": "karma start",

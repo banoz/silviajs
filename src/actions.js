@@ -1,4 +1,4 @@
-import Spark from "./lib/spark";
+import particle from "./lib/particle";
 import FirmwareDataMapper from "./lib/FirmwareDataMapper";
 import PersistentState from "./PersistentState";
 
@@ -49,25 +49,15 @@ export function loginSuccessful(token) {
 export function loginToParticle(email, password) {
   return function(dispatch) {
     dispatch(loginRequest());
-    Spark.login({
+    particle.login({
       username: email,
       password: password
-    }, function(err, data) {
-      if(err) {
-        dispatch(loginFailed());
-      } else {
-        // TODO: This doesn't belong here. Maybe a custom middleware could be used
-        PersistentState.saveToken(data.access_token);
-        dispatch(loginSuccessful(data.access_token));
-      }
-    });
-  };
-}
-
-export function loginWithToken(token) {
-  return function() {
-    Spark.login({
-      accessToken: token
+    }).then(function ({ body }) {
+      // TODO: This doesn't belong here. Maybe a custom middleware could be used
+      PersistentState.saveToken(body.access_token);
+      dispatch(loginSuccessful(body.access_token));
+    }, function (err) {
+      dispatch(loginFailed());
     });
   };
 }
@@ -93,25 +83,20 @@ export function dataReceive(data) {
 
 export function subscribeToDeviceData() {
   return function(dispatch) {
-    var request = Spark.getEventStream(deviceEvent, deviceName, function(event) {
-      if(event instanceof Error) {
-        console.log(event);
-      } else {
-        let rawData = JSON.parse(event.data);
-        let data = FirmwareDataMapper.variablesToApp(rawData);
+    particle.getEventStream({ name: deviceEvent, deviceId: deviceName, auth: PersistentState.loadToken() })
+      .then(function (stream) {
+        // Save the XMLHttpRequest to be able to abort it later
+        dispatch(dataStream(stream));
 
-        dispatch(dataReceive(data));
-      }
-    });
+        stream.on('event', function (event) {
+          let rawData = JSON.parse(event.data);
+          let data = FirmwareDataMapper.variablesToApp(rawData);
 
-    // If the token is invalid, kick back to login screen
-    request.onload = function(event) {
-      if(event.target.status === 401) {
+          dispatch(dataReceive(data));
+        });
+      }, function (err) {
         dispatch(loginFailed());
-      }
-    };
-    // Save the XMLHttpRequest to be able to abort it later
-    dispatch(dataStream(request));
+      });
   };
 }
 
@@ -149,9 +134,9 @@ export function fetchCalibrations() {
 
     dispatch(calsFetch(group));
 
-    Spark.getVariable(deviceName, deviceCals)
-    .then(function(payload) {
-      let rawData = JSON.parse(payload.result);
+    particle.getVariable({ deviceId: deviceName, name: deviceCals, auth: PersistentState.loadToken() })
+    .then(function({ body }) {
+      let rawData = JSON.parse(body.result);
       let data = FirmwareDataMapper.calibrationsToApp(rawData);
 
       dispatch(calsReceive(group));
@@ -170,12 +155,12 @@ export function fetchWakeupTime() {
 
     dispatch(calsFetch(group));
 
-    Spark.callFunction(deviceName, "get", deviceWakeupTime)
+    particle.callFunction({ deviceId: deviceName, name: "get", argument: deviceWakeupTime, auth: PersistentState.loadToken() })
     .then(function() {
-      return Spark.getVariable(deviceName, "result");
+      return particle.getVariable({ deviceId: deviceName, name: "result", auth: PersistentState.loadToken() });
     })
-    .then(function(payload) {
-      let wakeupTime = JSON.parse(payload.result);
+    .then(function({ body }) {
+      let wakeupTime = JSON.parse(body.result);
 
       dispatch(calsReceive(group));
       dispatch(calsSet({wakeupTime}));
@@ -192,7 +177,7 @@ export function setCalibration(cal, value) {
     let firmwareCal = FirmwareDataMapper.calibrationFirmwareName(cal);
     let firmwareValue = FirmwareDataMapper.calibrationFirmwareValue(cal, value);
 
-    Spark.callFunction(deviceName, "set", `${firmwareCal}=${firmwareValue}`)
+    particle.callFunction({ deviceId: deviceName, name: "set", argument: `${firmwareCal}=${firmwareValue}`, auth: PersistentState.loadToken() })
     .then(function() {
       dispatch(calsSet({ [cal]: value }));
     })

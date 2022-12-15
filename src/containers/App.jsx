@@ -2,7 +2,6 @@ import React, { Component, PropTypes } from "react";
 import { connect } from "react-redux";
 import Login from "../containers/Login.jsx";
 import Main from "../containers/Main.jsx";
-import { loginWithToken } from "../actions";
 
 class App extends Component {
   render() {
@@ -13,20 +12,6 @@ class App extends Component {
         </div>
       </div>
     );
-  }
-
-  componentWillMount() {
-    this.applyToken();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.applyToken();
-  }
-
-  applyToken() {
-    if(this.props.token) {
-      this.props.dispatch(loginWithToken(this.props.token));
-    }
   }
 
   renderPage() {

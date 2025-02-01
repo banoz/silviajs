@@ -21,6 +21,8 @@
     "build": "WEBPACK_ENV=build ./node_modules/.bin/webpack",
     "test": "karma start",
     "test:ci": "watch 'npm run test' src/"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
   },
   "dependencies": {
     "babel-core": "5.8.24",
@@ -58,6 +60,7 @@
     "karma-sinon": "1.0.4",
     "karma-sinon-chai": "1.1.0",
     "karma-sourcemap-loader": "0.3.5",
-    "karma-webpack": "1.7.0"
+    "karma-webpack": "1.7.0",
+    "gh-pages": "^5.0.0"
   }
 }

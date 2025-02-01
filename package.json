@@ -1,4 +1,5 @@
 {
+  "homepage": "https://banoz.github.io/silviajs",
   "name": "silviajs",
   "version": "0.0.1",
   "description": "Silvia Espresso Machine Control",
@@ -16,13 +17,12 @@
     "url": "git@github.com:monkbroc/silviajs.git"
   },
   "scripts": {
-    "start": "npm run dev",
-    "dev": "WEBPACK_ENV=dev ./node_modules/.bin/webpack --watch --inline",
-    "build": "WEBPACK_ENV=build ./node_modules/.bin/webpack",
-    "test": "karma start",
-    "test:ci": "watch 'npm run test' src/"
+    "start": "react-scripts start",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
   "dependencies": {
     "babel-core": "5.8.24",

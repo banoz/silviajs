@@ -5,7 +5,7 @@ import rootReducer from "./../reducers";
 import App from "./App.jsx";
 
 const store = configureStore({
-  reducer: rootReducer,
+  reducer: rootReducer
 });
 
 export default class Root extends Component {

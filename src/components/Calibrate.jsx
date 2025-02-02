@@ -12,7 +12,7 @@ class Calibrate extends PureComponent {
   }
 
   onChange(field) {
-    if(!this.changeHandlers[field]) {
+    if (!this.changeHandlers[field]) {
       this.changeHandlers[field] = function(event) {
         this.props.handleChange(field, event.target.value);
       }.bind(this);
@@ -23,6 +23,7 @@ class Calibrate extends PureComponent {
 
   render() {
     let loaded = this.props.loaded;
+
     let iPartOld = loaded ? this.props.iPart - this.props.integral * this.props.error : "–";
 
     return (

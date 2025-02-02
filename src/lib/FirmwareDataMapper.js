@@ -28,7 +28,7 @@ export default {
     }[name];
   },
   calibrationFirmwareValue: function(name, value) {
-    if(name === "sleeping") {
+    if (name === "sleeping") {
       return value ? 1 : 0;
     }
     return value;

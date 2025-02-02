@@ -24,7 +24,7 @@ class LoginForm extends PureComponent {
 
   render() {
     var inProgress = this.props.inProgress;
-    var busyIcon = <i className="glyphicon glyphicon-hourglass"></i>;
+    var busyIcon = <i className="glyphicon glyphicon-hourglass" />;
     var failureMessage = this.props.failed ?
       <div className="error">Invalid email or password</div> : "";
     var fieldProps = {

@@ -16,7 +16,7 @@ class App extends Component {
   }
 
   renderPage() {
-    if(this.props.token) {
+    if (this.props.token) {
       return <Main />;
     }
     return <Login />;

@@ -6,7 +6,7 @@ import { roundPrec } from "../lib/round";
 class Status extends PureComponent {
   renderTemperature() {
     if (this.props.sleeping) {
-      return (<i className="silvia silvia-sleep"></i>);
+      return (<i className="silvia silvia-sleep" />);
     }
 
     return roundPrec(this.props.temperature, 0);
@@ -24,7 +24,7 @@ class Status extends PureComponent {
           <div className="circle circle-medium circle-border">
             <div className="circle-inner">
               <div className="score-text">
-               {this.renderTemperature()}
+                {this.renderTemperature()}
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@ class Status extends PureComponent {
             </div>
             <div className="col-sm-9 col-md-5">
               <div className="progress progress-side">
-                <div className="progress-bar progress-bar-warning" style={{width: powerLog + "%"}}></div>
+                <div className="progress-bar progress-bar-warning" style={{ width: powerLog + "%" }} />
               </div>
             </div>
           </div>

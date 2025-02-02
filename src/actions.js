@@ -52,11 +52,12 @@ export function loginToParticle(email, password) {
     particle.login({
       username: email,
       password: password
-    }).then(function ({ body }) {
+    }).then(function({ body }) {
       // TODO: This doesn't belong here. Maybe a custom middleware could be used
       PersistentState.saveToken(body.access_token);
       dispatch(loginSuccessful(body.access_token));
-    }, function (err) {
+    },
+    () => {
       dispatch(loginFailed());
     });
   };
@@ -84,17 +85,19 @@ export function dataReceive(data) {
 export function subscribeToDeviceData() {
   return function(dispatch) {
     particle.getEventStream({ name: deviceEvent, deviceId: deviceName, auth: PersistentState.loadToken() })
-      .then(function (stream) {
+      .then(function(stream) {
         // Save the XMLHttpRequest to be able to abort it later
         dispatch(dataStream(stream));
 
-        stream.on('event', function (event) {
+        stream.on("event", function(event) {
           let rawData = JSON.parse(event.data);
+
           let data = FirmwareDataMapper.variablesToApp(rawData);
 
           dispatch(dataReceive(data));
         });
-      }, function (err) {
+      },
+      ()=> {
         dispatch(loginFailed());
       });
   };
@@ -135,17 +138,18 @@ export function fetchCalibrations() {
     dispatch(calsFetch(group));
 
     particle.getVariable({ deviceId: deviceName, name: deviceCals, auth: PersistentState.loadToken() })
-    .then(function({ body }) {
-      let rawData = JSON.parse(body.result);
-      let data = FirmwareDataMapper.calibrationsToApp(rawData);
+      .then(function({ body }) {
+        let rawData = JSON.parse(body.result);
 
-      dispatch(calsReceive(group));
-      dispatch(calsSet(data));
-    })
-    .catch(function(err) {
-      dispatch(calsFailure(group));
-      console.log(err);
-    });
+        let data = FirmwareDataMapper.calibrationsToApp(rawData);
+
+        dispatch(calsReceive(group));
+        dispatch(calsSet(data));
+      })
+      .catch(function(err) {
+        dispatch(calsFailure(group));
+        console.log(err);
+      });
   };
 }
 
@@ -155,34 +159,49 @@ export function fetchWakeupTime() {
 
     dispatch(calsFetch(group));
 
-    particle.callFunction({ deviceId: deviceName, name: "get", argument: deviceWakeupTime, auth: PersistentState.loadToken() })
-    .then(function() {
-      return particle.getVariable({ deviceId: deviceName, name: "result", auth: PersistentState.loadToken() });
+    particle.callFunction({
+      deviceId: deviceName,
+      name: "get",
+      argument: deviceWakeupTime,
+      auth: PersistentState.loadToken()
     })
-    .then(function({ body }) {
-      let wakeupTime = JSON.parse(body.result);
+      .then(function() {
+        return particle.getVariable({
+          deviceId: deviceName,
+          name: "result",
+          auth: PersistentState.loadToken()
+        });
+      })
+      .then(function({ body }) {
+        let wakeupTime = JSON.parse(body.result);
 
-      dispatch(calsReceive(group));
-      dispatch(calsSet({wakeupTime}));
-    })
-    .catch(function(err) {
-      dispatch(calsFailure(group));
-      console.log(err);
-    });
+        dispatch(calsReceive(group));
+        dispatch(calsSet({ wakeupTime }));
+      })
+      .catch(function(err) {
+        dispatch(calsFailure(group));
+        console.log(err);
+      });
   };
 }
 
 export function setCalibration(cal, value) {
   return function(dispatch) {
     let firmwareCal = FirmwareDataMapper.calibrationFirmwareName(cal);
+
     let firmwareValue = FirmwareDataMapper.calibrationFirmwareValue(cal, value);
 
-    particle.callFunction({ deviceId: deviceName, name: "set", argument: `${firmwareCal}=${firmwareValue}`, auth: PersistentState.loadToken() })
-    .then(function() {
-      dispatch(calsSet({ [cal]: value }));
+    particle.callFunction({
+      deviceId: deviceName,
+      name: "set",
+      argument: `${firmwareCal}=${firmwareValue}`,
+      auth: PersistentState.loadToken()
     })
-    .catch(function(err) {
-      console.log(err);
-    });
+      .then(function() {
+        dispatch(calsSet({ [cal]: value }));
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
   };
 }

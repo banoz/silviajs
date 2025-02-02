@@ -24,7 +24,7 @@
     "sinon": true
   },
 
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
 
   "plugins": [
     "react"
@@ -81,7 +81,6 @@
     "no-else-return": 2,
     "no-empty": 0,
     "no-empty-character-class": 2,
-    "no-empty-label": 2,
     "no-eq-null": 0,
     "no-eval": 2,
     "no-ex-assign": 2,
@@ -178,7 +177,6 @@
     "react/react-in-jsx-scope": 2,
     "react/self-closing-comp": 2,
     "react/sort-comp": 0,
-    "react/wrap-multilines": 2,
     "semi": [2, "always"],
     "semi-spacing": 0,
     "sort-vars": 0,
@@ -187,7 +185,7 @@
     "space-in-brackets": 0,
     "space-in-parens": [2, "never"],
     "space-infix-ops": 2,
-    "space-return-throw-case": 2,
+    "keyword-spacing": 2,
     "space-unary-ops": [2, { "words": true, "nonwords": false }],
     "spaced-comment": [2, "always"],
     "strict": 0,

@@ -7,7 +7,7 @@ class NavPill extends PureComponent {
   handleClick(event) {
     event.preventDefault();
     event.target.page = this.props.page;
-    if(this.props.onClick) {
+    if (this.props.onClick) {
       this.props.onClick(event);
     }
   }

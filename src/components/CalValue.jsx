@@ -17,7 +17,7 @@ class CalValue extends Component {
         onKeyDown={this.keyDown}
         onBlur={this.emitChange}
         contentEditable={!this.props.disabled}
-        dangerouslySetInnerHTML={{__html: this.props.value}}></span>
+        dangerouslySetInnerHTML={{ __html: this.props.value }} />
     );
   }
 
@@ -26,7 +26,7 @@ class CalValue extends Component {
   }
 
   componentDidUpdate() {
-    if(this.props.value !== React.findDOMNode(this).innerHTML) {
+    if (this.props.value !== React.findDOMNode(this).innerHTML) {
       React.findDOMNode(this).innerHTML = this.props.value;
     }
   }
@@ -34,7 +34,7 @@ class CalValue extends Component {
   keyDown(event) {
     const ENTER = 13;
 
-    if(event.keyCode === ENTER) {
+    if (event.keyCode === ENTER) {
       event.preventDefault();
       this.emitChange(event);
     }
@@ -43,7 +43,7 @@ class CalValue extends Component {
   emitChange(event) {
     var value = React.findDOMNode(this).innerHTML;
 
-    if(this.props.onChange && value !== this.props.value.toString()) {
+    if (this.props.onChange && value !== this.props.value.toString()) {
       event.target = { value: value };
       this.props.onChange(event);
     }

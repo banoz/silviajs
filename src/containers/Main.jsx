@@ -8,8 +8,10 @@ import Status from "../components/Status.jsx";
 import Calibrate from "../components/Calibrate.jsx";
 import Sleep from "../components/Sleep.jsx";
 
-import { subscribeToDeviceData, fetchCalibrations,
-  setCalibration, fetchWakeupTime } from "../actions";
+import {
+  subscribeToDeviceData, fetchCalibrations,
+  setCalibration, fetchWakeupTime
+} from "../actions";
 
 class Main extends Component {
   constructor(props) {
@@ -24,7 +26,7 @@ class Main extends Component {
   }
 
   render() {
-    var page = (Main.renderPage[this.props.page] || function() {}).bind(this);
+    var page = (Main.renderPage[this.props.page] || function() { }).bind(this);
 
     return (
       <div className="container">
@@ -43,23 +45,23 @@ class Main extends Component {
   }
 
   loadMainCals() {
-    if(this.props.calibrations.state.mainCals === "not loaded") {
+    if (this.props.calibrations.state.mainCals === "not loaded") {
       this.props.dispatch(fetchCalibrations());
     }
   }
 
   loadSleepCals() {
-    if(this.props.calibrations.state.sleepCals === "not loaded") {
+    if (this.props.calibrations.state.sleepCals === "not loaded") {
       this.props.dispatch(fetchWakeupTime());
     }
   }
 
   handleCalChange(field, value) {
-    switch(field) {
+    switch (field) {
       case "sleeping":
         let wakeupTime = this.props.calibrations.data.wakeupTime;
 
-        if(wakeupTime) {
+        if (wakeupTime) {
           wakeupTime = nextTimestamp(wakeupTime);
 
           this.props.dispatch(setCalibration("wakeupTime", wakeupTime));
@@ -80,6 +82,7 @@ class Main extends Component {
 Main.renderPage = {};
 Main.renderPage.calibrate = function() {
   let data = this.props.calibrations.data;
+
   let calProps = {
     loaded: this.props.calibrations.state.mainCals === "loaded",
     targetTemperature: data.targetTemperature,
@@ -97,6 +100,7 @@ Main.renderPage.calibrate = function() {
 
 Main.renderPage.sleep = function() {
   let data = this.props.calibrations.data;
+
   let sleepProps = {
     loaded: this.props.calibrations.state.sleepCals === "loaded",
     wakeupTime: data.wakeupTime

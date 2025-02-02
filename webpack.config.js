@@ -1,54 +1,58 @@
 var webpack = require('webpack');
-var UglifyJsPlugin = webpack.optimize.UglifyJsPlugin;
-var env = process.env.WEBPACK_ENV;
+var path = require('path')
+var TerserPlugin = require("terser-webpack-plugin");
+var NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+var env = 'dev';
 var WebpackDevServer = require('webpack-dev-server');
 
-var appName = 'app';
+var appName = 'main';
 var host = '0.0.0.0';
 var port = '5000';
 
-var plugins = [], outputFile;
+var plugins = [new NodePolyfillPlugin()], outputFile;
 
 if (env === 'build') {
-  plugins.push(new UglifyJsPlugin({ minimize: true }));
+  plugins.push(new TerserPlugin());
   outputFile = appName + '.min.js';
 } else {
   outputFile = appName + '.js';
 }
 
+console.log('outputFile:', outputFile);
+console.log('dist:', path.join(__dirname, 'dist'));
+
 var config = {
   entry: './src/index.js',
-  devtool: 'source-map',
-  output: {
-    path: __dirname + '/lib',
+  //devtool: 'source-map',
+  /*output: {
+    path: path.join(__dirname, 'dist'),
     filename: outputFile,
-    publicPath: __dirname + '/public'
-  },
+    publicPath: path.join(__dirname, 'public')
+  },*/
   module: {
-    loaders: [
+    rules: [
       {
-        test: /(\.jsx|\.js)$/,
-        loader: 'babel',
+        test: /\.(js|jsx)$/,
+        use: 'babel-loader',
         exclude: /(node_modules|bower_components)/
       }
     ]
   },
-  plugins: plugins
+  mode: 'development',
+  plugins: plugins,
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'public'),
+    },
+    port: 5000,
+    /*devMiddleware: {
+      index: true,
+      mimeTypes: { phtml: 'text/html' },
+      publicPath: path.join(__dirname, 'public'),
+      serverSideRender: true,
+      writeToDisk: true,
+    },*/
+  }
 };
-
-if (env === 'dev') {
-  new WebpackDevServer(webpack(config), {
-    contentBase: './public',
-    hot: true,
-    debug: true
-  }).listen(port, host, function (err, result) {
-    if (err) {
-      console.log(err);
-    }
-  });
-  console.log('-------------------------');
-  console.log('Local web server runs at http://' + host + ':' + port);
-  console.log('-------------------------');
-}
 
 module.exports = config;
